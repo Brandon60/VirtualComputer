@@ -1,0 +1,29 @@
+// Brandon Gonzales, 727002611
+
+
+CHIP Memory {
+	
+    IN  in[16],    	// Data to be written into memory
+	load,      	// Variable which decides whether to write to memory or not
+	address[16];	// Address for the register which we want access
+  
+    OUT out[16];    	// Output from the memory
+
+  PARTS:
+  // Add your code here
+
+  // determine which part of memory
+  DMux8Way(in = load, sel = address[13..15], a = ram1, b = ram2, c = ram3, d = ram4, e = screen, f = kbrd, g = extra1, h = extra2);
+
+  Or(a = ram1, b = ram2, out = ram5);
+  Or(a = ram5, b = ram3, out = ram6);
+  Or(a = ram6, b = ram4, out = ram);
+  
+  RAM32K(in = in, load = ram, address = address[0..14], out = out1);
+  Screen(in = in, load = screen, address = address[0..12], out = out2);
+  Keyboard(out = out3);
+
+  // output corresponding data
+  Mux8Way16(a = out1, b = out1, c = out1, d = out1, e = out2, f = out3, g = false, h = false, sel = address[13..15], out = out);
+
+}
